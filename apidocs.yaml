@@ -1,0 +1,215 @@
+openapi: 3.0.0
+info:
+  title: Customer API
+  description: API to manage customers, including CRUD operations (Create, Read, Update, Delete).
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /customers:
+    get:
+      summary: Get all customers
+      description: Retrieve a list of all customers that are not deleted.
+      responses:
+        '200':
+          description: A list of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    email:
+                      type: string
+                    phone:
+                      type: string
+        '500':
+          description: Internal server error
+    post:
+      summary: Add a new customer
+      description: Create a new customer in the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+              required:
+                - name
+                - email
+                - phone
+      responses:
+        '200':
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  phone:
+                    type: string
+        '500':
+          description: Failed to insert customer
+          
+  /customers/{id}:
+    get:
+      summary: Get a specific customer by ID
+      description: Retrieve details of a customer by their ID if they are not deleted.
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the customer
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Customer found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  phone:
+                    type: string
+        '404':
+          description: Customer not found
+        '500':
+          description: Error querying customer
+    put:
+      summary: Update customer data
+      description: Update an existing customer’s data by ID.
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the customer to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+              required:
+                - name
+                - email
+                - phone
+      responses:
+        '200':
+          description: Customer updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  customer:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+        '404':
+          description: Customer not found
+        '500':
+          description: Error updating customer
+    delete:
+      summary: Delete (soft delete) a customer by ID
+      description: Mark a customer as deleted by setting the `deleted_at` field.
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the customer to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Customer deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  customer:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+        '404':
+          description: Customer not found
+        '500':
+          description: Error deleting customer
+
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
